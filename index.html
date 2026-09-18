@@ -65,7 +65,7 @@
         <div>
           <label class="block text-[11px] font-semibold text-gray-600 mb-1">No. Urut Kwitansi</label>
           <input type="number" id="inNoUrut" value="" min="1" placeholder="Cth: 1" oninput="updatePreview()"
-            class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none text-center font-bold text-teal-900">
+            class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none text-center font-bold text-teal-900 bg-slate-50" readonly>
         </div>
         <div>
           <label class="block text-[11px] font-semibold text-gray-600 mb-1">Jenis ZISWAF</label>
@@ -87,7 +87,7 @@
       <div>
         <label class="block text-[11px] font-semibold text-gray-600 mb-1">Nama Donatur / Jamaah</label>
         <input type="text" id="inNama" placeholder="Masukkan nama donatur..." oninput="updatePreview()"
-          class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none uppercase">
+          class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none capitalize">
       </div>
 
       <div class="grid grid-cols-2 gap-2">
@@ -106,7 +106,7 @@
       <div>
         <label class="block text-[11px] font-semibold text-gray-600 mb-1">Untuk Keperluan / Doa</label>
         <textarea id="inKeperluan" rows="2" placeholder="Masukkan keperluan atau doa..." oninput="updatePreview()"
-          class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none"></textarea>
+          class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none capitalize"></textarea>
       </div>
 
     </div>
@@ -139,7 +139,7 @@
         <div class="text-[11px] space-y-1 text-gray-800 font-medium">
           <div class="flex justify-between border-b border-slate-100 pb-1">
             <span class="text-gray-500">Telah terima dari:</span>
-            <span class="font-bold uppercase" id="prevNama">-</span>
+            <span class="font-bold capitalize" id="prevNama">-</span>
           </div>
           <div class="flex justify-between border-b border-slate-100 pb-1">
             <span class="text-gray-500">Tanggal:</span>
@@ -157,7 +157,7 @@
 
         <div class="text-[11px] space-y-0.5">
           <span class="text-gray-500 font-semibold block">Untuk Keperluan:</span>
-          <p class="italic text-gray-700 bg-white p-2 rounded border border-slate-200 text-[10px]" id="prevKeperluan">-</p>
+          <p class="italic text-gray-700 bg-white p-2 rounded border border-slate-200 text-[10px] capitalize" id="prevKeperluan">-</p>
         </div>
 
         <div class="text-[10px] italic text-teal-800 bg-teal-50/60 p-2 rounded-lg border border-teal-100 space-y-1">
@@ -181,7 +181,7 @@
       <button type="button" onclick="generateKuitansiImage()" 
         class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3 rounded-xl text-xs shadow-md transition cursor-pointer flex items-center justify-center gap-1.5">
         <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-        Download Gambar Kuitansi
+        Download Gambar Kuitansi & Simpan Transaksi
       </button>
 
       <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200 space-y-2">
@@ -322,7 +322,21 @@
 
       const today = new Date().toISOString().split('T')[0];
       document.getElementById("inTanggal").value = today;
-      updatePreview();
+
+      // Ambil nombor urut seterusnya dari Google Sheet secara automatik
+      fetch(GAS_API_URL + "?action=getNextNoUrut")
+        .then(res => res.json())
+        .then(data => {
+          if (data.nextNo) {
+            document.getElementById("inNoUrut").value = data.nextNo;
+            updatePreview();
+          }
+        })
+        .catch(err => {
+          console.log("Gagal mendapatkan nombor urut automatik.");
+          document.getElementById("inNoUrut").value = "1";
+          updatePreview();
+        });
     }
 
     function tampilkanAlert(pesan, judul) {
@@ -337,6 +351,8 @@
       const modal = document.getElementById("customAlertModal");
       modal.classList.add("hidden");
       modal.style.display = "none";
+      // Selepas tutup alert, muat semula halaman atau kemas kini no urut seterusnya
+      location.reload();
     }
 
     function formatRupiah(input) {
@@ -414,7 +430,6 @@
       let hasilDoa = templateDoa.replace("[KEPERLUAN]", targetDoa);
       document.getElementById("prevDoaText").innerText = '"' + hasilDoa + '"';
 
-      // Salam lan penutup WhatsApp ditulis pepak tanpa disingkat
       const teksWa = "Assalamu'alaikum Warahmatullahi Wabarakatuh\n\n" +
         "Jazakumullahu khairan, *" + (nama !== "-" ? nama : "Bapak/Ibu") + "*.\n" +
         "Konfirmasi " + jenisVal.toLowerCase() + " Anda telah kami terima dengan rincian sebagai berikut:\n\n" +
@@ -431,8 +446,11 @@
 
     async function generateKuitansiImage() {
       const currentNoUrut = document.getElementById("inNoUrut").value;
-      if (!currentNoUrut) {
-        tampilkanAlert("Harap isi nomor urut kuitansi terlebih dahulu!", "Perhatian");
+      const nama = document.getElementById("inNama").value;
+      const nominal = document.getElementById("inNominal").value;
+      
+      if (!currentNoUrut || !nama || !nominal) {
+        tampilkanAlert("Sila lengkapkan No. Urut, Nama, dan Nominal terlebih dahulu!", "Perhatian");
         return;
       }
 
@@ -442,14 +460,24 @@
         const imageLink = canvas.toDataURL("image/png");
         
         const link = document.createElement("a");
-        const namaFile = document.getElementById("inNama").value.replace(/[^a-zA-Z0-9]/g, '_') || "Jamaah";
+        const namaFile = nama.replace(/[^a-zA-Z0-9]/g, '_') || "Jamaah";
         link.download = "Kuitansi_LAZMU_" + namaFile + ".png";
         link.href = imageLink;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
-        tampilkanAlert("Gambar kuitansi berhasil di-download!");
+        // Hantar data ke Google Sheet untuk disimpan secara automatik
+        const jenisVal = document.getElementById("inJenis").value;
+        const rawTanggal = document.getElementById("inTanggal").value;
+        const keperluan = document.getElementById("inKeperluan").value || "-";
+        const noKwitansiFull = document.getElementById("previewNoKwitansiText").innerText;
+
+        const saveUrl = GAS_API_URL + `?action=saveTransaction&noUrut=${currentNoUrut}&noKwitansi=${encodeURIComponent(noKwitansiFull)}&tanggal=${rawTanggal}&jenis=${jenisVal}&nama=${encodeURIComponent(nama)}&nominal=${encodeURIComponent(nominal)}&keperluan=${encodeURIComponent(keperluan)}`;
+        
+        fetch(saveUrl).catch(e => console.log("Simpan ke sheet latar belakang:", e));
+
+        tampilkanAlert("Kuitansi berjaya dimuat turun dan transaksi telah disimpan ke Google Sheet!");
       } catch (err) {
         tampilkanAlert("Gagal mendownload kuitansi: " + err.message, "Terjadi Kesalahan");
       }
