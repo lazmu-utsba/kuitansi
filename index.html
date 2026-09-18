@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="id"><!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -45,8 +44,8 @@
     </div>
   </div>
 
-  <!-- APLIKASI UTAMA -->
-  <div id="appSection" class="hidden max-w-md mx-auto p-4 space-y-4">
+  <!-- APLIKASI UTAMA (AWALNYA DISEMBUNYIKAN) -->
+  <div id="appSection" class="hidden max-w-md mx-auto p-4 space-y-4" style="display: none;">
     
     <!-- HEADER -->
     <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200 text-center relative">
@@ -202,7 +201,7 @@
   </div>
 
   <!-- POP-UP MODAL -->
-  <div id="customAlertModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm transition-opacity">
+  <div id="customAlertModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm transition-opacity" style="display: none;">
     <div class="bg-white rounded-2xl shadow-2xl z-10 w-full max-w-xs p-6 text-center border border-slate-100 space-y-4">
       <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-teal-100 shadow-sm border border-teal-200">
         <svg class="h-7 w-7 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -221,7 +220,6 @@
   </div>
 
   <script>
-    // URL WEB APP APPS SCRIPT-MU:
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwnlC9uBPJgHdidxf-LSeBHwoXhTjRoe9Zo4ZCWIuSL-w7EtqvAyIcpEjFdvJyVeuB_yA/exec";
     
     let dynamicConfig = {
@@ -247,6 +245,10 @@
       const isLogged = sessionStorage.getItem("lazmu_logged");
       if (isLogged === "true") {
         bukaAplikasi();
+      } else {
+        // Pastikan halaman login muncul dengan benar di awal
+        document.getElementById("loginSection").style.display = "flex";
+        document.getElementById("appSection").style.display = "none";
       }
 
       document.getElementById("inPassword").addEventListener("keypress", function(event) {
@@ -256,7 +258,6 @@
       });
     });
 
-    // Fungsi untuk menampilkan/menyembunyikan password
     function togglePassword() {
       const inputPass = document.getElementById("inPassword");
       const eyeIcon = document.getElementById("eyeIcon");
@@ -304,13 +305,23 @@
     function prosesLogout() {
       sessionStorage.removeItem("lazmu_logged");
       document.getElementById("appSection").classList.add("hidden");
+      document.getElementById("appSection").style.display = "none";
+      
       document.getElementById("loginSection").classList.remove("hidden");
+      document.getElementById("loginSection").style.display = "flex";
+      
       document.getElementById("inPassword").value = "";
     }
 
     function bukaAplikasi() {
-      document.getElementById("loginSection").classList.add("hidden");
-      document.getElementById("appSection").classList.remove("hidden");
+      const loginSec = document.getElementById("loginSection");
+      const appSec = document.getElementById("appSection");
+
+      loginSec.classList.add("hidden");
+      loginSec.style.display = "none";
+
+      appSec.classList.remove("hidden");
+      appSec.style.display = "block";
 
       const today = new Date().toISOString().split('T')[0];
       document.getElementById("inTanggal").value = today;
@@ -320,445 +331,15 @@
     function tampilkanAlert(pesan, judul) {
       document.getElementById("modalTitle").innerText = judul || "Berhasil!";
       document.getElementById("customAlertPesan").innerText = pesan;
-      document.getElementById("customAlertModal").classList.remove("hidden");
+      const modal = document.getElementById("customAlertModal");
+      modal.classList.remove("hidden");
+      modal.style.display = "flex";
     }
 
     function tutupAlert() {
-      document.getElementById("customAlertModal").classList.add("hidden");
-    }
-
-    function formatRupiah(input) {
-      let angka = input.value.replace(/[^,\d]/g, '').toString();
-      let split = angka.split(',');
-      let sisa = split[0].length % 3;
-      let rupiah = split[0].substr(0, sisa);
-      let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-      if (ribuan) {
-        let separator = sisa ? '.' : '';
-        rupiah += separator + ribuan.join('.');
-      }
-      input.value = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
-    }
-
-    function getRomawiMonth() {
-      const rawTanggal = document.getElementById("inTanggal").value;
-      if (!rawTanggal) return "I";
-      
-      const parts = rawTanggal.split("-");
-      const monthIndex = parseInt(parts[1], 10) - 1;
-      
-      const months = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
-      return months[monthIndex] || "I";
-    }
-
-    function formatTanggalIndo(dateString) {
-      if (!dateString) return "-";
-      const parts = dateString.split("-");
-      if (parts.length !== 3) return dateString;
-      return parts[2] + "-" + parts[1] + "-" + parts[0];
-    }
-
-    function updatePreview() {
-      const rawNoUrut = document.getElementById("inNoUrut").value;
-      const jenisVal = document.getElementById("inJenis").value; 
-      let kodeJenis = "INF";
-      if (jenisVal === "Zakat") kodeJenis = "ZKT";
-      if (jenisVal === "Sedekah") kodeJenis = "SDK";
-      if (jenisVal === "Wakaf") kodeJenis = "WKF";
-
-      const romawiBulan = getRomawiMonth();
-      const tahun = new Date().getFullYear();
-
-      let noKwitansiOtomatis = "-";
-      let qrUrl = "";
-      if (rawNoUrut) {
-        const noUrutPadded = String(rawNoUrut).padStart(2, '0');
-        noKwitansiOtomatis = noUrutPadded + "/LAZMU/" + kodeJenis + "/" + romawiBulan + "/" + tahun;
-        qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" + encodeURIComponent(noKwitansiOtomatis);
-      }
-
-      document.getElementById("previewNoKwitansiText").innerText = noKwitansiOtomatis;
-
-      const nama = document.getElementById("inNama").value || "-";
-      const rawTanggal = document.getElementById("inTanggal").value;
-      const tanggalIndo = formatTanggalIndo(rawTanggal);
-      const nominal = document.getElementById("inNominal").value || "0";
-      const keperluan = document.getElementById("inKeperluan").value || "-";
-
-      document.getElementById("prevNo").innerText = noKwitansiOtomatis;
-      document.getElementById("prevNama").innerText = nama;
-      document.getElementById("prevTanggal").innerText = tanggalIndo;
-      document.getElementById("prevJenisLabel").innerText = jenisVal;
-      document.getElementById("prevNominal1").innerText = "Rp " + nominal;
-      document.getElementById("prevNominal2").innerText = "Rp " + nominal;
-      document.getElementById("prevKeperluan").innerText = keperluan;
-
-      document.getElementById("prevQrImg").src = qrUrl;
-
-      let templateDoa = dynamicConfig.TEMPLATE_DOA;
-      if (keperluan !== "-") {
-        let hasilDoa = templateDoa.replace("[KEPERLUAN]", keperluan);
-        document.getElementById("prevDoaText").innerText = '"' + hasilDoa + '"';
-      } else {
-        document.getElementById("prevDoaText").innerText = '"-"';
-      }
-
-      const teksWa = "Assalamu'alaikum Wr. Wb.\n\n" +
-        "Jazakumullahu khairan, *" + (nama !== "-" ? nama : "Bapak/Ibu") + "*.\n" +
-        "Konfirmasi " + jenisVal.toLowerCase() + " Anda telah kami terima dengan rincian sebagai berikut:\n\n" +
-        "• *No. Kwitansi:* " + noKwitansiOtomatis + "\n" +
-        "• *Tanggal:* " + tanggalIndo + "\n" +
-        "• *Jenis:* " + jenisVal + "\n" +
-        "• *Nominal:* Rp " + nominal + "\n" +
-        "• *Untuk Keperluan:* " + keperluan + "\n\n" +
-        "terlampir Kuitansi resmi. Semoga Allah SWT melipatgandakan pahala, memberkahi harta dan keluarga Anda.\n\n" +
-        "Wassalamu'alaikum Wr. Wb.\n---\n*Lembaga Amil Zakat Masjid Utsman bin Affan (LAZMU)*";
-
-      document.getElementById("formatWaText").value = teksWa;
-    }
-
-    async function generateKuitansiImage() {
-      const currentNoUrut = document.getElementById("inNoUrut").value;
-      if (!currentNoUrut) {
-        tampilkanAlert("Harap isi nomor urut kuitansi terlebih dahulu!", "Perhatian");
-        return;
-      }
-
-      const element = document.getElementById("areaKuitansi");
-      try {
-        const canvas = await html2canvas(element, { scale: 2, useCORS: true });
-        const imageLink = canvas.toDataURL("image/png");
-        
-        const link = document.createElement("a");
-        const namaFile = document.getElementById("inNama").value.replace(/[^a-zA-Z0-9]/g, '_') || "Jamaah";
-        link.download = "Kuitansi_LAZMU_" + namaFile + ".png";
-        link.href = imageLink;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        tampilkanAlert("Gambar kuitansi berhasil di-download!");
-      } catch (err) {
-        tampilkanAlert("Gagal mendownload kuitansi: " + err.message, "Terjadi Kesalahan");
-      }
-    }
-
-    function salinTeksWa() {
-      const textarea = document.getElementById("formatWaText");
-      textarea.select();
-      navigator.clipboard.writeText(textarea.value);
-      tampilkanAlert("Teks balasan WhatsApp berhasil disalin!");
-    }
-  </script>
-</body>
-</html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kuitansi Digital LAZMU</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-</head>
-<body class="bg-slate-100 min-h-screen font-sans pb-12">
-
-  <!-- HALAMAN LOGIN -->
-  <div id="loginSection" class="min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-md p-6 w-full max-w-sm border border-slate-200 space-y-4 text-center">
-      <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-teal-100 shadow-sm border border-teal-200">
-        <svg class="h-7 w-7 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-        </svg>
-      </div>
-      <div>
-        <h1 class="text-base font-bold text-teal-900">Login Kuitansi LAZMU</h1>
-        <p class="text-[11px] text-gray-500 mt-0.5">Masjid Utsman bin Affan</p>
-      </div>
-
-      <div class="space-y-3 text-left">
-        <div>
-          <label class="block text-[11px] font-semibold text-gray-600 mb-1">Password Akses</label>
-          <input type="password" id="inPassword" placeholder="Masukkan password..." 
-            class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none">
-        </div>
-        <button type="button" id="btnLogin" onclick="prosesLogin()" 
-          class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md cursor-pointer">
-          Masuk Aplikasi
-        </button>
-        <p id="errorLogin" class="text-[10px] text-red-500 text-center hidden font-semibold">Password salah! Coba lagi.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- APLIKASI UTAMA -->
-  <div id="appSection" class="hidden max-w-md mx-auto p-4 space-y-4">
-    
-    <!-- HEADER -->
-    <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200 text-center relative">
-      <button type="button" onclick="prosesLogout()" title="Keluar"
-        class="absolute right-3 top-3 text-[10px] bg-red-50 hover:bg-red-100 text-red-600 font-semibold px-2.5 py-1 rounded-lg border border-red-200 transition cursor-pointer">
-        Keluar
-      </button>
-      <h1 class="text-sm font-bold text-teal-800">Layanan Kuitansi Digital LAZMU</h1>
-      <p class="text-[11px] text-gray-500 mt-0.5">Masjid Utsman bin Affan</p>
-    </div>
-
-    <!-- FORM INPUT -->
-    <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200 space-y-3">
-      <h2 class="text-xs font-bold text-gray-700 uppercase tracking-wide">Data Transaksi Jamaah</h2>
-
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="block text-[11px] font-semibold text-gray-600 mb-1">No. Urut Kwitansi</label>
-          <input type="number" id="inNoUrut" value="" min="1" placeholder="Cth: 1" oninput="updatePreview()"
-            class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none text-center font-bold text-teal-900">
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-gray-600 mb-1">Jenis ZISWAF</label>
-          <select id="inJenis" onchange="updatePreview()"
-            class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none bg-white font-semibold text-teal-800">
-            <option value="Infak">Infak</option>
-            <option value="Zakat">Zakat</option>
-            <option value="Sedekah">Sedekah</option>
-            <option value="Wakaf">Wakaf</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center">
-        <span class="text-[10px] text-gray-500 block">Nomor Kwitansi Otomatis:</span>
-        <span id="previewNoKwitansiText" class="text-xs font-bold text-teal-900 tracking-wide">-</span>
-      </div>
-
-      <div>
-        <label class="block text-[11px] font-semibold text-gray-600 mb-1">Nama Donatur / Jamaah</label>
-        <input type="text" id="inNama" placeholder="Masukkan nama donatur..." oninput="updatePreview()"
-          class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none uppercase">
-      </div>
-
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="block text-[11px] font-semibold text-gray-600 mb-1">Tanggal Transaksi</label>
-          <input type="date" id="inTanggal" onchange="updatePreview()"
-            class="w-full p-2 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none bg-white">
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-gray-600 mb-1">Nominal (Rp)</label>
-          <input type="text" id="inNominal" placeholder="0" oninput="formatRupiah(this); updatePreview();"
-            class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none font-bold text-teal-800">
-        </div>
-      </div>
-
-      <div>
-        <label class="block text-[11px] font-semibold text-gray-600 mb-1">Untuk Keperluan / Doa</label>
-        <textarea id="inKeperluan" rows="2" placeholder="Masukkan keperluan atau doa..." oninput="updatePreview()"
-          class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none"></textarea>
-      </div>
-
-    </div>
-
-    <!-- PREVIEW KUITANSI -->
-    <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200">
-      <label class="block text-xs font-bold text-gray-700 uppercase mb-2 text-center">Preview Kuitansi</label>
-      
-      <div id="areaKuitansi" class="p-4 bg-amber-50/30 border-2 border-dashed border-amber-200 rounded-xl text-left space-y-3 relative">
-        
-        <!-- HEADER KUITANSI -->
-        <div class="border-b border-slate-300 pb-2.5 text-center">
-          <div class="flex justify-center mb-1">
-            <img id="prevLogoImg" src="https://lh3.googleusercontent.com/d/1CnBKrSHF_nKrMw1IeM6awuhtOn6TuOAJ" alt="Logo LAZMU" class="w-12 h-12 object-contain rounded-full shadow-sm border border-slate-100 bg-white p-0.5" crossorigin="anonymous">
-          </div>
-          <h3 class="font-bold text-teal-800 text-sm tracking-wide">lazmu</h3>
-          <p class="text-[9px] font-bold text-gray-500 uppercase tracking-tight mt-1">TANDA TERIMA ZAKAT, INFAK, SEDEKAH & WAKAF</p>
-        </div>
-
-        <!-- No Kwitansi & QR Code -->
-        <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-          <div>
-            <span class="text-gray-500 text-[10px] block">No. Kwitansi:</span>
-            <span class="font-bold text-teal-900 text-xs" id="prevNo">-</span>
-          </div>
-          <div>
-            <img id="prevQrImg" src="" alt="QR Code" class="w-10 h-10 object-contain border border-slate-200 rounded p-0.5 bg-white shadow-sm" crossorigin="anonymous">
-          </div>
-        </div>
-
-        <div class="text-[11px] space-y-1 text-gray-800 font-medium">
-          <div class="flex justify-between border-b border-slate-100 pb-1">
-            <span class="text-gray-500">Telah terima dari:</span>
-            <span class="font-bold uppercase" id="prevNama">-</span>
-          </div>
-          <div class="flex justify-between border-b border-slate-100 pb-1">
-            <span class="text-gray-500">Tanggal:</span>
-            <span id="prevTanggal">-</span>
-          </div>
-        </div>
-
-        <div class="bg-white p-2.5 rounded-lg border border-slate-200 text-[11px] space-y-1">
-          <span class="font-bold text-gray-500 block uppercase text-[10px]">Rincian:</span>
-          <div class="flex justify-between"><span id="prevJenisLabel">Infak</span>: <span class="font-bold" id="prevNominal1">Rp 0</span></div>
-          <div class="flex justify-between border-t border-slate-100 pt-1 font-bold text-teal-800">
-            <span>TOTAL:</span> <span id="prevNominal2">Rp 0</span>
-          </div>
-        </div>
-
-        <div class="text-[11px] space-y-0.5">
-          <span class="text-gray-500 font-semibold block">Untuk Keperluan:</span>
-          <p class="italic text-gray-700 bg-white p-2 rounded border border-slate-200 text-[10px]" id="prevKeperluan">-</p>
-        </div>
-
-        <div class="text-[10px] italic text-teal-800 bg-teal-50/60 p-2 rounded-lg border border-teal-100 space-y-1">
-          <p id="prevDoaText">"-"</p>
-          <p class="text-[9px] text-gray-500 not-italic pt-1 border-t border-teal-100/60">
-            "Barakallahu lakum fii ma a'thaitum..."
-          </p>
-        </div>
-
-        <!-- FOOTER KUITANSI -->
-        <div class="text-center pt-2 border-t border-slate-200 space-y-0.5">
-          <p class="text-[9px] font-bold text-teal-800">Lembaga Amil Zakat Masjid Utsman bin Affan</p>
-          <p class="text-[8px] text-gray-400">Masjid Utsman bin Affan</p>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- TOMBOL AKSI -->
-    <div class="space-y-3">
-      <button type="button" onclick="generateKuitansiImage()" 
-        class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3 rounded-xl text-xs shadow-md transition cursor-pointer flex items-center justify-center gap-1.5">
-        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-        Download Gambar Kuitansi
-      </button>
-
-      <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200 space-y-2">
-        <label class="block text-xs font-bold text-gray-700 uppercase">Format Pesan Balasan WhatsApp</label>
-        <textarea id="formatWaText" rows="6" readonly
-          class="w-full p-2.5 text-[11px] bg-slate-50 border border-gray-300 rounded-xl outline-none text-gray-700 font-mono"></textarea>
-        
-        <button type="button" onclick="salinTeksWa()" 
-          class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-1.5">
-          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-          Salin Teks WhatsApp
-        </button>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- POP-UP MODAL -->
-  <div id="customAlertModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm transition-opacity">
-    <div class="bg-white rounded-2xl shadow-2xl z-10 w-full max-w-xs p-6 text-center border border-slate-100 space-y-4">
-      <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-teal-100 shadow-sm border border-teal-200">
-        <svg class="h-7 w-7 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-        </svg>
-      </div>
-      <div>
-        <h3 id="modalTitle" class="text-base font-bold text-slate-800 mb-1">Berhasil!</h3>
-        <p id="customAlertPesan" class="text-xs text-slate-600 leading-relaxed">Notifikasi pesan.</p>
-      </div>
-      <button type="button" onclick="tutupAlert()" 
-        class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-md cursor-pointer">
-        Mengerti
-      </button>
-    </div>
-  </div>
-
-  <script>
-    // GANTI URL DI BAWAH INI DENGAN URL WEB APP APPS SCRIPT-MU:
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwnlC9uBPJgHdidxf-LSeBHwoXhTjRoe9Zo4ZCWIuSL-w7EtqvAyIcpEjFdvJyVeuB_yA/exec";
-    
-    let dynamicConfig = {
-      LOGO_URL: "https://lh3.googleusercontent.com/d/1CnBKrSHF_nKrMw1IeM6awuhtOn6TuOAJ",
-      TEMPLATE_DOA: "Semoga menjadi amal jariyah yang terus mengalir pahalanya untuk [KEPERLUAN]."
-    };
-
-    window.addEventListener("DOMContentLoaded", () => {
-      // Ambil config logo & template doa dari Google Sheet
-      fetch(GAS_API_URL + "?action=getConfig")
-        .then(res => res.json())
-        .then(config => {
-          if (config.LOGO_URL) {
-            dynamicConfig.LOGO_URL = config.LOGO_URL;
-            document.getElementById("prevLogoImg").src = config.LOGO_URL;
-          }
-          if (config.TEMPLATE_DOA) dynamicConfig.TEMPLATE_DOA = config.TEMPLATE_DOA;
-          updatePreview();
-        })
-        .catch(err => {
-          console.log("Gagal load config, menggunakan setelan default.");
-        });
-
-      const isLogged = sessionStorage.getItem("lazmu_logged");
-      if (isLogged === "true") {
-        bukaAplikasi();
-      }
-
-      document.getElementById("inPassword").addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-          prosesLogin();
-        }
-      });
-    });
-
-    // Proses login diverifikasi langsung ke Backend (Google Apps Script / Sheet)
-    function prosesLogin() {
-      const inputPass = document.getElementById("inPassword").value;
-      const errorEl = document.getElementById("errorLogin");
-      const btnLogin = document.getElementById("btnLogin");
-
-      if (!inputPass) return;
-
-      btnLogin.innerText = "Memeriksa...";
-      btnLogin.disabled = true;
-
-      fetch(GAS_API_URL + "?action=login&pass=" + encodeURIComponent(inputPass))
-        .then(res => res.json())
-        .then(data => {
-          btnLogin.innerText = "Masuk Aplikasi";
-          btnLogin.disabled = false;
-
-          if (data.success === true) {
-            sessionStorage.setItem("lazmu_logged", "true");
-            errorEl.classList.add("hidden");
-            bukaAplikasi();
-          } else {
-            errorEl.classList.remove("hidden");
-            document.getElementById("inPassword").value = "";
-          }
-        })
-        .catch(err => {
-          btnLogin.innerText = "Masuk Aplikasi";
-          btnLogin.disabled = false;
-          tampilkanAlert("Gagal terhubung ke server / internet bermasalah.", "Kesalahan Jaringan");
-        });
-    }
-
-    function prosesLogout() {
-      sessionStorage.removeItem("lazmu_logged");
-      document.getElementById("appSection").classList.add("hidden");
-      document.getElementById("loginSection").classList.remove("hidden");
-      document.getElementById("inPassword").value = "";
-    }
-
-    function bukaAplikasi() {
-      document.getElementById("loginSection").classList.add("hidden");
-      document.getElementById("appSection").classList.remove("hidden");
-
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById("inTanggal").value = today;
-      updatePreview();
-    }
-
-    function tampilkanAlert(pesan, judul) {
-      document.getElementById("modalTitle").innerText = judul || "Berhasil!";
-      document.getElementById("customAlertPesan").innerText = pesan;
-      document.getElementById("customAlertModal").classList.remove("hidden");
-    }
-
-    function tutupAlert() {
-      document.getElementById("customAlertModal").classList.add("hidden");
+      const modal = document.getElementById("customAlertModal");
+      modal.classList.add("hidden");
+      modal.style.display = "none";
     }
 
     function formatRupiah(input) {
