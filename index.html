@@ -410,12 +410,8 @@
 
       let templateDoa = dynamicConfig.TEMPLATE_DOA;
       let namaDonatur = (nama !== "-" && nama !== "") ? nama : "Bapak/Ibu";
-      
-      let hasilDoa = templateDoa
-        .replace(/\[NAMA\]/g, namaDonatur)
-        .replace(/\[KEPERLUAN\]/g, keperluan)
-        .replace(/\[JENIS\]/g, jenisVal);
-        
+      let targetDoa = (keperluan && keperluan !== "-") ? keperluan : namaDonatur;
+      let hasilDoa = templateDoa.replace("[KEPERLUAN]", targetDoa);
       document.getElementById("prevDoaText").innerText = '"' + hasilDoa + '"';
 
       // Salam lan penutup WhatsApp ditulis pepak tanpa disingkat
