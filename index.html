@@ -409,12 +409,11 @@
       document.getElementById("prevQrImg").src = qrUrl;
 
       let templateDoa = dynamicConfig.TEMPLATE_DOA;
-      if (keperluan !== "-") {
-        let hasilDoa = templateDoa.replace("[KEPERLUAN]", keperluan);
-        document.getElementById("prevDoaText").innerText = '"' + hasilDoa + '"';
-      } else {
-        document.getElementById("prevDoaText").innerText = '"-"';
-      }
+      let namaDonatur = (nama !== "-" && nama !== "") ? nama : "Bapak/Ibu";
+      let hasilDoa = templateDoa
+       .replace("[NAMA]", namaDonatur)
+       .replace("[KEPERLUAN]", keperluan);
+      document.getElementById("prevDoaText").innerText = '"' + hasilDoa + '"';
 
       // Salam lan penutup WhatsApp ditulis pepak tanpa disingkat
       const teksWa = "Assalamu'alaikum Warahmatullahi Wabarakatuh\n\n" +
