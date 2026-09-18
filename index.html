@@ -119,7 +119,6 @@
         
         <!-- HEADER KUITANSI -->
         <div class="border-b border-slate-300 pb-2.5 text-center">
-          <!-- LOGO TANPA BULETAN / TANPA KOTAK -->
           <div class="flex justify-center mb-1">
             <img id="prevLogoImg" src="https://lh3.googleusercontent.com/d/1CnBKrSHF_nKrMw1IeM6awuhtOn6TuOAJ" alt="Logo LAZMU" class="h-10 w-auto object-contain" crossorigin="anonymous">
           </div>
@@ -303,7 +302,6 @@
 
     function prosesLogout() {
       sessionStorage.removeItem("lazmu_logged");
-      document.getElementById("appSectionclassList")?.add("hidden");
       document.getElementById("appSection").style.display = "none";
       
       document.getElementById("loginSection").classList.remove("hidden");
@@ -418,7 +416,8 @@
         document.getElementById("prevDoaText").innerText = '"-"';
       }
 
-      const teksWa = "Assalamu'alaikum Wr. Wb.\n\n" +
+      // Salam lan penutup WhatsApp ditulis pepak tanpa disingkat
+      const teksWa = "Assalamu'alaikum Warahmatullahi Wabarakatuh\n\n" +
         "Jazakumullahu khairan, *" + (nama !== "-" ? nama : "Bapak/Ibu") + "*.\n" +
         "Konfirmasi " + jenisVal.toLowerCase() + " Anda telah kami terima dengan rincian sebagai berikut:\n\n" +
         "• *No. Kwitansi:* " + noKwitansiOtomatis + "\n" +
@@ -427,7 +426,7 @@
         "• *Nominal:* Rp " + nominal + "\n" +
         "• *Untuk Keperluan:* " + keperluan + "\n\n" +
         "terlampir Kuitansi resmi. Semoga Allah SWT melipatgandakan pahala, memberkahi harta dan keluarga Anda.\n\n" +
-        "Wassalamu'alaikum Wr. Wb.\n---\n*Lembaga Amil Zakat Masjid Utsman bin Affan (LAZMU)*";
+        "Wassalamu'alaikum Warahmatullahi Wabarakatuh\n---\n*Lembaga Amil Zakat Masjid Utsman bin Affan (LAZMU)*";
 
       document.getElementById("formatWaText").value = teksWa;
     }
