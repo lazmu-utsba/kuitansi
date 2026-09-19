@@ -106,7 +106,7 @@
 
       <div>
         <label class="block text-[11px] font-semibold text-gray-600 mb-1">Keterangan</label>
-        <textarea id="inKeperluan" rows="2" placeholder="Masukkan keperluan atau doa..." oninput="updatePreview()"
+        <textarea id="inKeperluan" rows="2" placeholder="Masukkan keterangan atau doa..." oninput="updatePreview()"
           class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none capitalize"></textarea>
       </div>
 
@@ -353,6 +353,7 @@
       const modal = document.getElementById("customAlertModal");
       modal.classList.add("hidden");
       modal.style.display = "none";
+      // location.reload sudah dihapus agar halaman tidak reset otomatis
     }
 
     function formatRupiah(input) {
@@ -457,27 +458,32 @@
       const element = document.getElementById("areaKuitansi");
       try {
         const canvas = await html2canvas(element, { scale: 2, useCORS: true });
-        const imageLink = canvas.toDataURL("image/png");
         
-        const link = document.createElement("a");
-        const namaFile = nama.replace(/[^a-zA-Z0-9]/g, '_') || "Jamaah";
-        link.download = "Kuitansi_LAZMU_" + namaFile + ".png";
-        link.href = imageLink;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        // Menggunakan Blob agar popup download di HP bersih tanpa teks base64 yang ruwet
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          const namaFile = nama.replace(/[^a-zA-Z0-9]/g, '_') || "Jamaah";
+          link.download = "Kuitansi_LAZMU_" + namaFile + ".png";
+          link.href = url;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
 
-        // Hantar data ke Google Sheet untuk disimpan secara automatik
-        const jenisVal = document.getElementById("inJenis").value;
-        const rawTanggal = document.getElementById("inTanggal").value;
-        const keperluan = document.getElementById("inKeperluan").value || "-";
-        const noKwitansiFull = document.getElementById("previewNoKwitansiText").innerText;
+          // Simpan data otomatis ke Google Sheet di latar belakang
+          const jenisVal = document.getElementById("inJenis").value;
+          const rawTanggal = document.getElementById("inTanggal").value;
+          const keperluan = document.getElementById("inKeperluan").value || "-";
+          const noKwitansiFull = document.getElementById("previewNoKwitansiText").innerText;
 
-        const saveUrl = GAS_API_URL + `?action=saveTransaction&noUrut=${currentNoUrut}&noKwitansi=${encodeURIComponent(noKwitansiFull)}&tanggal=${rawTanggal}&jenis=${jenisVal}&nama=${encodeURIComponent(nama)}&nominal=${encodeURIComponent(nominal)}&keperluan=${encodeURIComponent(keperluan)}`;
-        
-        fetch(saveUrl).catch(e => console.log("Simpan ke sheet latar belakang:", e));
+          const saveUrl = GAS_API_URL + `?action=saveTransaction&noUrut=${currentNoUrut}&noKwitansi=${encodeURIComponent(noKwitansiFull)}&tanggal=${rawTanggal}&jenis=${jenisVal}&nama=${encodeURIComponent(nama)}&nominal=${encodeURIComponent(nominal)}&keperluan=${encodeURIComponent(keperluan)}`;
+          
+          fetch(saveUrl).catch(e => console.log("Simpan ke sheet latar belakang:", e));
 
-        tampilkanAlert("Kuitansi berjaya dimuat turun dan transaksi telah disimpan ke Google Sheet!");
+          tampilkanAlert("Kuitansi berhasil didownload dan transaksi telah disimpan ke Google Sheet!");
+        }, "image/png");
+
       } catch (err) {
         tampilkanAlert("Gagal mendownload kuitansi: " + err.message, "Terjadi Kesalahan");
       }
