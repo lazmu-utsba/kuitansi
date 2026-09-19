@@ -64,7 +64,7 @@
 
       <div class="grid grid-cols-2 gap-2">
         <div>
-          <label class="block text-[11px] font-semibold text-gray-600 mb-1">No. Urut Kwitansi</label>
+          <label class="block text-[11px] font-semibold text-gray-600 mb-1">No. Urut Kuitansi</label>
           <input type="number" id="inNoUrut" value="" min="1" placeholder="Cth: 1" oninput="updatePreview()"
             class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none text-center font-bold text-teal-900 bg-slate-50" readonly>
         </div>
@@ -78,7 +78,7 @@
       </div>
 
       <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center">
-        <span class="text-[10px] text-gray-500 block">Nomor Kwitansi Otomatis:</span>
+        <span class="text-[10px] text-gray-500 block">Nomor Kuitansi Otomatis:</span>
         <span id="previewNoKwitansiText" class="text-xs font-bold text-teal-900 tracking-wide">-</span>
       </div>
 
@@ -138,10 +138,10 @@
           <p class="text-[9px] font-bold text-gray-500 uppercase tracking-tight mt-1">TANDA TERIMA ZAKAT, INFAK, SEDEKAH & WAKAF</p>
         </div>
 
-        <!-- No Kwitansi & QR Code -->
+        <!-- No Kuitansi & QR Code -->
         <div class="flex justify-between items-center border-b border-[#C29B46]/20 pb-2.5">
           <div>
-            <span class="text-gray-500 text-[10px] block">No. Kwitansi:</span>
+            <span class="text-gray-500 text-[10px] block">No. Kuitansi:</span>
             <span class="font-bold text-[#0B7A6E] text-xs" id="prevNo">-</span>
           </div>
           <div>
@@ -514,7 +514,7 @@
       const teksWa = "Assalamu'alaikum Warahmatullahi Wabarakatuh\n\n" +
         "Jazakumullahu khairan, *" + (nama !== "-" ? nama : "Bapak/Ibu") + "*.\n" +
         "Konfirmasi " + jenisVal.toLowerCase() + " Anda telah kami terima dengan rincian sebagai berikut:\n\n" +
-        "• *No. Kwitansi:* " + noKwitansiOtomatis + "\n" +
+        "• *No. Kuitansi:* " + noKwitansiOtomatis + "\n" +
         "• *Tanggal:* " + tanggalIndo + "\n" +
         "• *Jenis:* " + jenisVal + "\n" +
         "• *Nominal:* Rp " + nominal + "\n" +
