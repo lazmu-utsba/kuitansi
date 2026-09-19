@@ -484,8 +484,8 @@
       try {
         const canvasAsli = await html2canvas(element, { scale: 2, useCORS: true });
         
-        // Jarak space dikurangi lagi setengahnya dari 20 menjadi 10
-        const paddingSpace = 10; 
+        // Jarak space dikurangi setengahnya dari 40 menjadi 20
+        const paddingSpace = 20; 
         const canvasBaru = document.createElement("canvas");
         canvasBaru.width = canvasAsli.width + (paddingSpace * 2);
         canvasBaru.height = canvasAsli.height + (paddingSpace * 2);
@@ -517,7 +517,7 @@
           
           fetch(saveUrl).catch(e => console.log("Simpan ke sheet latar belakang:", e));
 
-          tampilkanAlert("Kuitansi berhasil didownload dengan space yang sangat pas dan transaksi tersimpan!");
+          tampilkanAlert("Kuitansi berhasil didownload dengan space yang pas dan transaksi tersimpan!");
         }, "image/png");
 
       } catch (err) {
