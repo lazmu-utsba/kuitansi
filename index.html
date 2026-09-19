@@ -482,22 +482,19 @@
 
       const element = document.getElementById("areaKuitansi");
       try {
-        // Render kuitansi asli dengan html2canvas
         const canvasAsli = await html2canvas(element, { scale: 2, useCORS: true });
         
-        // Buat canvas tambahan pembungkus dengan memberikan ruang space (padding keliling)
-        const paddingSpace = 40; // Ukuran jarak space luar gambar
+        // Jarak space dikurangi setengahnya dari 40 menjadi 20
+        const paddingSpace = 20; 
         const canvasBaru = document.createElement("canvas");
         canvasBaru.width = canvasAsli.width + (paddingSpace * 2);
         canvasBaru.height = canvasAsli.height + (paddingSpace * 2);
         
         const ctx = canvasBaru.getContext("2d");
         
-        // Berikan warna latar belakang putih bersih pada space luar tersebut
         ctx.fillStyle = "#FFFFFF"; 
         ctx.fillRect(0, 0, canvasBaru.width, canvasBaru.height);
         
-        // Tempel gambar kuitansi pas di tengah-tengah canvas baru dengan jarak space yang rapi
         ctx.drawImage(canvasAsli, paddingSpace, paddingSpace);
 
         canvasBaru.toBlob((blob) => {
@@ -520,7 +517,7 @@
           
           fetch(saveUrl).catch(e => console.log("Simpan ke sheet latar belakang:", e));
 
-          tampilkanAlert("Kuitansi berhasil didownload dengan space keliling yang rapi dan transaksi tersimpan!");
+          tampilkanAlert("Kuitansi berhasil didownload dengan space yang pas dan transaksi tersimpan!");
         }, "image/png");
 
       } catch (err) {
