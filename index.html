@@ -111,20 +111,21 @@
 
     <!-- PREVIEW KUITANSI -->
     <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200">
-      <label class="block text-xs font-bold text-gray-700 uppercase mb-2 text-center">Preview Kuitansi</label>
+      <label class="block text-xs font-bold text-gray-700 uppercase mb-3 text-center">Preview Kuitansi</label>
       
-      <div id="areaKuitansi" class="p-4 bg-[#FBF7EE] border border-[#C29B46]/60 rounded-xl text-left space-y-3 relative shadow-sm">
+      <!-- Area kuitansi dengan padding p-6 supaya ada spasi longgar dari ujung garis -->
+      <div id="areaKuitansi" class="p-6 bg-[#FBF7EE] border border-[#C29B46]/60 rounded-xl text-left space-y-4 relative shadow-sm">
         
         <!-- HEADER KUITANSI -->
-        <div class="border-b border-[#C29B46]/30 pb-2.5 text-center">
-          <div class="flex justify-center mb-1">
+        <div class="border-b border-[#C29B46]/30 pb-3 text-center">
+          <div class="flex justify-center py-1">
             <img id="prevLogoImg" src="https://lh3.googleusercontent.com/d/1CnBKrSHF_nKrMw1IeM6awuhtOn6TuOAJ" alt="Logo LAZMU" class="h-10 w-auto object-contain" crossorigin="anonymous">
           </div>
           <p class="text-[9px] font-bold text-gray-500 uppercase tracking-tight mt-1">TANDA TERIMA ZAKAT, INFAK, SEDEKAH & WAKAF</p>
         </div>
 
         <!-- No Kwitansi & QR Code -->
-        <div class="flex justify-between items-center border-b border-[#C29B46]/20 pb-2">
+        <div class="flex justify-between items-center border-b border-[#C29B46]/20 pb-2.5">
           <div>
             <span class="text-gray-500 text-[10px] block">No. Kwitansi:</span>
             <span class="font-bold text-[#0B7A6E] text-xs" id="prevNo">-</span>
@@ -134,39 +135,39 @@
           </div>
         </div>
 
-        <div class="text-[11px] space-y-1 text-gray-800 font-medium">
-          <div class="flex justify-between border-b border-[#C29B46]/20 pb-1">
+        <div class="text-[11px] space-y-1.5 text-gray-800 font-medium">
+          <div class="flex justify-between border-b border-[#C29B46]/20 pb-1.5">
             <span class="text-gray-500">Telah terima dari:</span>
             <span class="font-bold capitalize text-[#0B7A6E]" id="prevNama">-</span>
           </div>
-          <div class="flex justify-between border-b border-[#C29B46]/20 pb-1">
+          <div class="flex justify-between border-b border-[#C29B46]/20 pb-1.5">
             <span class="text-gray-500">Tanggal:</span>
             <span id="prevTanggal">-</span>
           </div>
         </div>
 
-        <div class="bg-white p-2.5 rounded-lg border border-[#C29B46]/30 text-[11px] space-y-1">
+        <div class="bg-white p-3 rounded-lg border border-[#C29B46]/30 text-[11px] space-y-1.5">
           <span class="font-bold text-gray-500 block uppercase text-[10px]">Rincian:</span>
           <div class="flex justify-between"><span id="prevJenisLabel">Infak</span>: <span class="font-bold" id="prevNominal1">Rp 0</span></div>
-          <div class="flex justify-between border-t border-[#C29B46]/20 pt-1 font-bold text-[#0B7A6E]">
+          <div class="flex justify-between border-t border-[#C29B46]/20 pt-1.5 font-bold text-[#0B7A6E]">
             <span>TOTAL:</span> <span id="prevNominal2">Rp 0</span>
           </div>
         </div>
 
-        <div class="text-[11px] space-y-0.5">
+        <div class="text-[11px] space-y-1">
           <span class="text-gray-500 font-semibold block">Keterangan:</span>
-          <p class="italic text-gray-700 bg-white p-2 rounded border border-[#C29B46]/30 text-[10px] capitalize" id="prevKeperluan">-</p>
+          <p class="italic text-gray-700 bg-white p-2.5 rounded border border-[#C29B46]/30 text-[10px] capitalize" id="prevKeperluan">-</p>
         </div>
 
-        <div class="text-[10px] italic text-[#0B7A6E] bg-[#0B7A6E]/5 p-2 rounded-lg border border-[#0B7A6E]/20 space-y-1">
+        <div class="text-[10px] italic text-[#0B7A6E] bg-[#0B7A6E]/5 p-2.5 rounded-lg border border-[#0B7A6E]/20 space-y-1.5">
           <p id="prevDoaText">"-"</p>
-          <p class="text-[9px] text-gray-500 not-italic pt-1 border-t border-[#0B7A6E]/20">
+          <p class="text-[9px] text-gray-500 not-italic pt-1.5 border-t border-[#0B7A6E]/20">
             "Ajarakallahu fiima a'thaita, wa baaraka fiima abqaita, wa ja'alahu laka thahuura." Semoga Allah memberikan pahala atas apa yang engkau berikan, memberikan berkah atas harta yang engkau simpan, dan menjadikannya pembersih bagi jiwamu.
           </p>
         </div>
 
         <!-- FOOTER KUITANSI -->
-        <div class="text-center pt-2 border-t border-[#C29B46]/30 space-y-0.5">
+        <div class="text-center pt-2.5 border-t border-[#C29B46]/30 space-y-0.5">
           <p class="text-[9px] font-bold text-[#0B7A6E]">Lembaga Amil Zakat Masjid Utsman bin Affan</p>
           <p class="text-[8px] text-gray-400">The Green City View Blok K-1, Kel. Jatihandap, Kec. Mandalajati, Kota Bandung</p> 
         </div>
@@ -413,7 +414,6 @@
       const rawNoUrut = document.getElementById("inNoUrut").value;
       const jenisVal = document.getElementById("inJenis").value || "Infak"; 
       
-      // Penentuan kode jenis kuitansi otomatis berdasarkan huruf pertama/isi jenis
       let kodeJenis = "INF";
       let jLower = jenisVal.toLowerCase();
       if (jLower.includes("zakat")) kodeJenis = "ZKT";
