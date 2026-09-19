@@ -7,19 +7,36 @@
   <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1CnBKrSHF_nKrMw1IeM6awuhtOn6TuOAJ">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    /* Warna Brand Identitas LAZMU */
+    :root {
+      --lazmu-teal: #0B7A6E;
+      --lazmu-teal-dark: #075850;
+      --lazmu-gold: #C29B46;
+      --lazmu-gold-light: #FBF7EE;
+    }
+    .text-lazmu-teal { color: var(--lazmu-teal); }
+    .bg-lazmu-teal { background-color: var(--lazmu-teal); }
+    .bg-lazmu-teal:hover { background-color: var(--lazmu-teal-dark); }
+    .border-lazmu-teal { border-color: var(--lazmu-teal); }
+    
+    .text-lazmu-gold { color: var(--lazmu-gold); }
+    .border-lazmu-gold { border-color: var(--lazmu-gold); }
+    .bg-lazmu-gold-light { background-color: var(--lazmu-gold-light); }
+  </style>
 </head>
 <body class="bg-slate-100 min-h-screen font-sans pb-12">
 
   <!-- HALAMAN LOGIN -->
   <div id="loginSection" class="min-h-screen flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-md p-6 w-full max-w-sm border border-slate-200 space-y-4 text-center">
-      <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-teal-100 shadow-sm border border-teal-200">
-        <svg class="h-7 w-7 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-teal-50 shadow-sm border border-teal-100">
+        <svg class="h-7 w-7 text-lazmu-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
         </svg>
       </div>
       <div>
-        <h1 class="text-base font-bold text-teal-900">Login Kuitansi LAZMU</h1>
+        <h1 class="text-base font-bold text-lazmu-teal">Login Kuitansi LAZMU</h1>
         <p class="text-[11px] text-gray-500 mt-0.5">Masjid Utsman bin Affan</p>
       </div>
 
@@ -28,7 +45,7 @@
           <label class="block text-[11px] font-semibold text-gray-600 mb-1">Password Akses</label>
           <div class="relative">
             <input type="password" id="inPassword" placeholder="Masukkan password..." 
-              class="w-full p-2.5 pr-10 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none">
+              class="w-full p-2.5 pr-10 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0B7A6E] outline-none">
             <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer">
               <svg id="eyeIcon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
@@ -37,7 +54,7 @@
           </div>
         </div>
         <button type="button" id="btnLogin" onclick="prosesLogin()" 
-          class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md cursor-pointer">
+          class="w-full bg-lazmu-teal text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md cursor-pointer">
           Masuk Aplikasi
         </button>
         <p id="errorLogin" class="text-[10px] text-red-500 text-center hidden font-semibold">Password salah! Coba lagi.</p>
@@ -54,7 +71,7 @@
         class="absolute right-3 top-3 text-[10px] bg-red-50 hover:bg-red-100 text-red-600 font-semibold px-2.5 py-1 rounded-lg border border-red-200 transition cursor-pointer">
         Keluar
       </button>
-      <h1 class="text-sm font-bold text-teal-800">Layanan Kuitansi Digital LAZMU</h1>
+      <h1 class="text-sm font-bold text-lazmu-teal">Layanan Kuitansi Digital LAZMU</h1>
       <p class="text-[11px] text-gray-500 mt-0.5">Masjid Utsman bin Affan</p>
     </div>
 
@@ -66,12 +83,12 @@
         <div>
           <label class="block text-[11px] font-semibold text-gray-600 mb-1">No. Urut Kwitansi</label>
           <input type="number" id="inNoUrut" value="" min="1" placeholder="Cth: 1" oninput="updatePreview()"
-            class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none text-center font-bold text-teal-900 bg-slate-50" readonly>
+            class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0B7A6E] outline-none text-center font-bold text-lazmu-teal bg-slate-50" readonly>
         </div>
         <div>
           <label class="block text-[11px] font-semibold text-gray-600 mb-1">Jenis ZISWAF</label>
           <select id="inJenis" onchange="updatePreview()"
-            class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none bg-white font-semibold text-teal-800">
+            class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0B7A6E] outline-none bg-white font-semibold text-lazmu-teal">
             <option value="Infak">Infak</option>
             <option value="Zakat">Zakat</option>
             <option value="Sedekah">Sedekah</option>
@@ -82,32 +99,32 @@
 
       <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center">
         <span class="text-[10px] text-gray-500 block">Nomor Kwitansi Otomatis:</span>
-        <span id="previewNoKwitansiText" class="text-xs font-bold text-teal-900 tracking-wide">-</span>
+        <span id="previewNoKwitansiText" class="text-xs font-bold text-lazmu-teal tracking-wide">-</span>
       </div>
 
       <div>
         <label class="block text-[11px] font-semibold text-gray-600 mb-1">Nama Donatur / Jamaah</label>
         <input type="text" id="inNama" placeholder="Masukkan nama donatur..." oninput="updatePreview()"
-          class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none capitalize">
+          class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0B7A6E] outline-none capitalize">
       </div>
 
       <div class="grid grid-cols-2 gap-2">
         <div>
           <label class="block text-[11px] font-semibold text-gray-600 mb-1">Tanggal Transaksi</label>
           <input type="date" id="inTanggal" onchange="updatePreview()"
-            class="w-full p-2 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none bg-white">
+            class="w-full p-2 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0B7A6E] outline-none bg-white">
         </div>
         <div>
           <label class="block text-[11px] font-semibold text-gray-600 mb-1">Nominal (Rp)</label>
           <input type="text" id="inNominal" placeholder="0" oninput="formatRupiah(this); updatePreview();"
-            class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none font-bold text-teal-800">
+            class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0B7A6E] outline-none font-bold text-lazmu-teal">
         </div>
       </div>
 
       <div>
         <label class="block text-[11px] font-semibold text-gray-600 mb-1">Untuk Keperluan / Doa</label>
         <textarea id="inKeperluan" rows="2" placeholder="Masukkan keperluan atau doa..." oninput="updatePreview()"
-          class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none capitalize"></textarea>
+          class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0B7A6E] outline-none capitalize"></textarea>
       </div>
 
     </div>
@@ -116,10 +133,11 @@
     <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200">
       <label class="block text-xs font-bold text-gray-700 uppercase mb-2 text-center">Preview Kuitansi</label>
       
-      <div id="areaKuitansi" class="p-4 bg-amber-50/30 border-2 border-dashed border-amber-200 rounded-xl text-left space-y-3 relative">
+      <!-- Area Kuitansi dengan aksen warna Gold dan Teal Logo LAZMU -->
+      <div id="areaKuitansi" class="p-4 bg-lazmu-gold-light border-2 border-dashed border-lazmu-gold rounded-xl text-left space-y-3 relative">
         
         <!-- HEADER KUITANSI -->
-        <div class="border-b border-slate-300 pb-2.5 text-center">
+        <div class="border-b border-amber-200 pb-2.5 text-center">
           <div class="flex justify-center mb-1">
             <img id="prevLogoImg" src="https://lh3.googleusercontent.com/d/1CnBKrSHF_nKrMw1IeM6awuhtOn6TuOAJ" alt="Logo LAZMU" class="h-10 w-auto object-contain" crossorigin="anonymous">
           </div>
@@ -127,41 +145,41 @@
         </div>
 
         <!-- No Kwitansi & QR Code -->
-        <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+        <div class="flex justify-between items-center border-b border-amber-100 pb-2">
           <div>
             <span class="text-gray-500 text-[10px] block">No. Kwitansi:</span>
-            <span class="font-bold text-teal-900 text-xs" id="prevNo">-</span>
+            <span class="font-bold text-lazmu-teal text-xs" id="prevNo">-</span>
           </div>
           <div>
-            <img id="prevQrImg" src="" alt="QR Code" class="w-10 h-10 object-contain border border-slate-200 rounded p-0.5 bg-white shadow-sm" crossorigin="anonymous">
+            <img id="prevQrImg" src="" alt="QR Code" class="w-10 h-10 object-contain border border-amber-200 rounded p-0.5 bg-white shadow-sm" crossorigin="anonymous">
           </div>
         </div>
 
         <div class="text-[11px] space-y-1 text-gray-800 font-medium">
-          <div class="flex justify-between border-b border-slate-100 pb-1">
+          <div class="flex justify-between border-b border-amber-100 pb-1">
             <span class="text-gray-500">Telah terima dari:</span>
-            <span class="font-bold capitalize" id="prevNama">-</span>
+            <span class="font-bold capitalize text-lazmu-teal" id="prevNama">-</span>
           </div>
-          <div class="flex justify-between border-b border-slate-100 pb-1">
+          <div class="flex justify-between border-b border-amber-100 pb-1">
             <span class="text-gray-500">Tanggal:</span>
             <span id="prevTanggal">-</span>
           </div>
         </div>
 
-        <div class="bg-white p-2.5 rounded-lg border border-slate-200 text-[11px] space-y-1">
+        <div class="bg-white p-2.5 rounded-lg border border-amber-200 text-[11px] space-y-1 shadow-xs">
           <span class="font-bold text-gray-500 block uppercase text-[10px]">Rincian:</span>
           <div class="flex justify-between"><span id="prevJenisLabel">Infak</span>: <span class="font-bold" id="prevNominal1">Rp 0</span></div>
-          <div class="flex justify-between border-t border-slate-100 pt-1 font-bold text-teal-800">
+          <div class="flex justify-between border-t border-slate-100 pt-1 font-bold text-lazmu-teal">
             <span>TOTAL:</span> <span id="prevNominal2">Rp 0</span>
           </div>
         </div>
 
         <div class="text-[11px] space-y-0.5">
           <span class="text-gray-500 font-semibold block">Untuk Keperluan:</span>
-          <p class="italic text-gray-700 bg-white p-2 rounded border border-slate-200 text-[10px] capitalize" id="prevKeperluan">-</p>
+          <p class="italic text-gray-700 bg-white p-2 rounded border border-amber-200 text-[10px] capitalize" id="prevKeperluan">-</p>
         </div>
 
-        <div class="text-[10px] italic text-teal-800 bg-teal-50/60 p-2 rounded-lg border border-teal-100 space-y-1">
+        <div class="text-[10px] italic text-lazmu-teal bg-teal-50/70 p-2 rounded-lg border border-teal-100 space-y-1">
           <p id="prevDoaText">"-"</p>
           <p class="text-[9px] text-gray-500 not-italic pt-1 border-t border-teal-100/60">
             "Barakallahu lakum fii ma a'thaitum..."
@@ -169,8 +187,8 @@
         </div>
 
         <!-- FOOTER KUITANSI -->
-        <div class="text-center pt-2 border-t border-slate-200 space-y-0.5">
-          <p class="text-[9px] font-bold text-teal-800">Lembaga Amil Zakat Masjid Utsman bin Affan</p>
+        <div class="text-center pt-2 border-t border-amber-200 space-y-0.5">
+          <p class="text-[9px] font-bold text-lazmu-teal">Lembaga Amil Zakat Masjid Utsman bin Affan</p>
           <p class="text-[8px] text-gray-400">The Green City View Blok K-1, Kel. Jatihandap, Kec. Mandalajati, Kota Bandung</p> 
         </div>
 
@@ -180,7 +198,7 @@
     <!-- TOMBOL AKSI -->
     <div class="space-y-3">
       <button type="button" onclick="generateKuitansiImage()" 
-        class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3 rounded-xl text-xs shadow-md transition cursor-pointer flex items-center justify-center gap-1.5">
+        class="w-full bg-lazmu-teal text-white font-bold py-3 rounded-xl text-xs shadow-md transition cursor-pointer flex items-center justify-center gap-1.5">
         <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
         Download Gambar Kuitansi & Simpan Transaksi
       </button>
@@ -203,8 +221,8 @@
   <!-- POP-UP MODAL -->
   <div id="customAlertModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm transition-opacity" style="display: none;">
     <div class="bg-white rounded-2xl shadow-2xl z-10 w-full max-w-xs p-6 text-center border border-slate-100 space-y-4">
-      <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-teal-100 shadow-sm border border-teal-200">
-        <svg class="h-7 w-7 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-teal-50 shadow-sm border border-teal-100">
+        <svg class="h-7 w-7 text-lazmu-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
         </svg>
       </div>
@@ -213,7 +231,7 @@
         <p id="customAlertPesan" class="text-xs text-slate-600 leading-relaxed">Notifikasi pesan.</p>
       </div>
       <button type="button" onclick="tutupAlert()" 
-        class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-md cursor-pointer">
+        class="w-full bg-lazmu-teal text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-md cursor-pointer">
         Mengerti
       </button>
     </div>
@@ -324,7 +342,6 @@
       const today = new Date().toISOString().split('T')[0];
       document.getElementById("inTanggal").value = today;
 
-      // Ambil nombor urut seterusnya dari Google Sheet secara automatik
       fetch(GAS_API_URL + "?action=getNextNoUrut")
         .then(res => res.json())
         .then(data => {
@@ -352,7 +369,6 @@
       const modal = document.getElementById("customAlertModal");
       modal.classList.add("hidden");
       modal.style.display = "none";
-      // Selepas tutup alert, muat semula halaman atau kemas kini no urut seterusnya
       location.reload();
     }
 
@@ -468,7 +484,6 @@
         link.click();
         document.body.removeChild(link);
 
-        // Hantar data ke Google Sheet untuk disimpan secara automatik
         const jenisVal = document.getElementById("inJenis").value;
         const rawTanggal = document.getElementById("inTanggal").value;
         const keperluan = document.getElementById("inKeperluan").value || "-";
