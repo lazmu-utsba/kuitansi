@@ -109,7 +109,7 @@
 
     </div>
 
-    <!-- TOMBOL SIMPAN & BUAT BARU (DIPISAH DARI PREVIEW & DOWNLOAD) -->
+    <!-- TOMBOL SIMPAN & BUAT BARU -->
     <div class="grid grid-cols-2 gap-2">
       <button type="button" onclick="simpanTransaksiKeSheet()" 
         class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl text-xs shadow-md transition cursor-pointer flex items-center justify-center gap-1.5">
@@ -117,7 +117,7 @@
         Simpan Transaksi
       </button>
 
-      <button type="button" onclick="buatKuitansiBaru()" 
+      <button type="button" onclick="konfirmasiKuitansiBaru()" 
         class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs shadow-md transition cursor-pointer flex items-center justify-center gap-1.5">
         <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
         Kuitansi Baru
@@ -212,10 +212,10 @@
 
   </div>
 
-  <!-- POP-UP MODAL -->
+  <!-- MODAL ALERT / NOTIFIKASI BIASA -->
   <div id="customAlertModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm transition-opacity" style="display: none;">
     <div class="bg-white rounded-2xl shadow-2xl z-10 w-full max-w-xs p-6 text-center border border-slate-100 space-y-4">
-      <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-teal-100 shadow-sm border border-teal-200">
+      <div id="alertIconSuccess" class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-teal-100 shadow-sm border border-teal-200">
         <svg class="h-7 w-7 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
         </svg>
@@ -231,8 +231,33 @@
     </div>
   </div>
 
+  <!-- MODAL KONFIRMASI (PENGGANTI CONFIRM BAWAAN BROWSER YANG CANTIK) -->
+  <div id="customConfirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm transition-opacity" style="display: none;">
+    <div class="bg-white rounded-2xl shadow-2xl z-10 w-full max-w-xs p-6 text-center border border-slate-100 space-y-4">
+      <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-amber-100 shadow-sm border border-amber-200">
+        <svg class="h-7 w-7 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-base font-bold text-slate-800 mb-1">Kuitansi Baru</h3>
+        <p class="text-xs text-slate-600 leading-relaxed">Buat kuitansi baru? Pastikan data transaksi saat ini sudah disimpan.</p>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" onclick="tutupConfirm(false)" 
+          class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-all cursor-pointer">
+          Batal
+        </button>
+        <button type="button" onclick="tutupConfirm(true)" 
+          class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-md cursor-pointer">
+          Ya, Lanjutkan
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbySmCmobDXDm3mMeYVDYyy_zh1h50n4HuOPYpTElePyx-b7atYUlIBuZtG2B7ytnnjGJQ/exec";
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbygpgdEDPXijIkz1jX893toom9k9YCa9wg7uw4Hhd50lYtG-9lM6tY0F28RDZmZD5NQiQ/exec";
     
     let dynamicConfig = {
       LOGO_URL: "https://lh3.googleusercontent.com/d/1CnBKrSHF_nKrMw1IeM6awuhtOn6TuOAJ",
@@ -389,6 +414,28 @@
       modal.style.display = "none";
     }
 
+    // Fungsi menampilkan modal konfirmasi custom yang cantik
+    function konfirmasiKuitansiBaru() {
+      const modal = document.getElementById("customConfirmModal");
+      modal.classList.remove("hidden");
+      modal.style.display = "flex";
+    }
+
+    function tutupConfirm(isYa) {
+      const modal = document.getElementById("customConfirmModal");
+      modal.classList.add("hidden");
+      modal.style.display = "none";
+
+      if (isYa) {
+        document.getElementById("inNama").value = "";
+        document.getElementById("inNominal").value = "";
+        document.getElementById("inKeperluan").value = "";
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById("inTanggal").value = today;
+        fetchNextNoUrut();
+      }
+    }
+
     function formatRupiah(input) {
       let angka = input.value.replace(/[^,\d]/g, '').toString();
       let split = angka.split(',');
@@ -479,7 +526,6 @@
       document.getElementById("formatWaText").value = teksWa;
     }
 
-    // FUNGSI KHUSUS SIMPAN (Bisa diklik berkali-kali untuk update data pada nomor kuitansi yang sama)
     function simpanTransaksiKeSheet() {
       const currentNoUrut = document.getElementById("inNoUrut").value;
       const nama = document.getElementById("inNama").value;
@@ -513,20 +559,6 @@
         });
     }
 
-    // FUNGSI BUAT KUITANSI BARU (Reset form & ambil nomor urut berikutnya)
-    function buatKuitansiBaru() {
-      if (confirm("Buat kuitansi baru? Pastikan data transaksi saat ini sudah disimpan.")) {
-        document.getElementById("inNama").value = "";
-        document.getElementById("inNominal").value = "";
-        document.getElementById("inKeperluan").value = "";
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById("inTanggal").value = today;
-        
-        fetchNextNoUrut();
-      }
-    }
-
-    // FUNGSI DOWNLOAD GAMBAR (Murni download tanpa simpan ulang ke Google Sheet)
     async function generateKuitansiImage() {
       const currentNoUrut = document.getElementById("inNoUrut").value;
       const nama = document.getElementById("inNama").value;
