@@ -72,7 +72,7 @@
           <label class="block text-[11px] font-semibold text-gray-600 mb-1">Jenis ZISWAF</label>
           <select id="inJenis" onchange="updatePreview()"
             class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none bg-white font-semibold text-teal-800">
-            <!-- Opsi akan diisi secara dinamis dari Google Sheet -->
+            <!-- Opsi diisi dinamis -->
           </select>
         </div>
       </div>
@@ -107,6 +107,21 @@
           class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none capitalize"></textarea>
       </div>
 
+    </div>
+
+    <!-- TOMBOL SIMPAN & BUAT BARU (DIPISAH DARI PREVIEW & DOWNLOAD) -->
+    <div class="grid grid-cols-2 gap-2">
+      <button type="button" onclick="simpanTransaksiKeSheet()" 
+        class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl text-xs shadow-md transition cursor-pointer flex items-center justify-center gap-1.5">
+        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm2 16H5V5h11.17L19 7.83V19zm-7-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zM6 6h9v4H6z"/></svg>
+        Simpan Transaksi
+      </button>
+
+      <button type="button" onclick="buatKuitansiBaru()" 
+        class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs shadow-md transition cursor-pointer flex items-center justify-center gap-1.5">
+        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        Kuitansi Baru
+      </button>
     </div>
 
     <!-- PREVIEW KUITANSI -->
@@ -179,7 +194,7 @@
       <button type="button" onclick="generateKuitansiImage()" 
         class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3 rounded-xl text-xs shadow-md transition cursor-pointer flex items-center justify-center gap-1.5">
         <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-        Download Gambar Kuitansi & Simpan Transaksi
+        Download Gambar Kuitansi
       </button>
 
       <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200 space-y-2">
@@ -217,8 +232,7 @@
   </div>
 
   <script>
-    // PASTIKAN URL INI ADALAH URL DEPLOYMENT TERBARU DARI GOOGLE APPS SCRIPT
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbygpgdEDPXijIkz1jX893toom9k9YCa9wg7uw4Hhd50lYtG-9lM6tY0F28RDZmZD5NQiQ/exec";
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbySmCmobDXDm3mMeYVDYyy_zh1h50n4HuOPYpTElePyx-b7atYUlIBuZtG2B7ytnnjGJQ/exec";
     
     let dynamicConfig = {
       LOGO_URL: "https://lh3.googleusercontent.com/d/1CnBKrSHF_nKrMw1IeM6awuhtOn6TuOAJ",
@@ -236,7 +250,6 @@
           }
           if (config.TEMPLATE_DOA) dynamicConfig.TEMPLATE_DOA = config.TEMPLATE_DOA;
           if (config.JENIS_ZISWAF) {
-            dynamicConfig.JENIS_ZISWAF = config.JENIS_ZISWAF;
             setupJenisZiswafDropdown(config.JENIS_ZISWAF);
           } else {
             setupJenisZiswafDropdown("Infak, Zakat, Sedekah, Wakaf");
@@ -244,7 +257,6 @@
           updatePreview();
         })
         .catch(err => {
-          console.log("Gagal load config, menggunakan setelan default.");
           setupJenisZiswafDropdown("Infak, Zakat, Sedekah, Wakaf");
           updatePreview();
         });
@@ -266,8 +278,7 @@
 
     function setupJenisZiswafDropdown(ziswafString) {
       const selectEl = document.getElementById("inJenis");
-      selectEl.innerHTML = ""; // Bersihkan opsi lama
-      
+      selectEl.innerHTML = "";
       const items = ziswafString.split(",");
       items.forEach(item => {
         const trimmed = item.trim();
@@ -327,10 +338,8 @@
     function prosesLogout() {
       sessionStorage.removeItem("lazmu_logged");
       document.getElementById("appSection").style.display = "none";
-      
       document.getElementById("loginSection").classList.remove("hidden");
       document.getElementById("loginSection").style.display = "flex";
-      
       document.getElementById("inPassword").value = "";
     }
 
@@ -347,7 +356,10 @@
       const today = new Date().toISOString().split('T')[0];
       document.getElementById("inTanggal").value = today;
 
-      // Ambil nombor urut seterusnya dari Google Sheet secara automatik
+      fetchNextNoUrut();
+    }
+
+    function fetchNextNoUrut() {
       fetch(GAS_API_URL + "?action=getNextNoUrut")
         .then(res => res.json())
         .then(data => {
@@ -394,10 +406,8 @@
     function getRomawiMonth() {
       const rawTanggal = document.getElementById("inTanggal").value;
       if (!rawTanggal) return "I";
-      
       const parts = rawTanggal.split("-");
       const monthIndex = parseInt(parts[1], 10) - 1;
-      
       const months = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
       return months[monthIndex] || "I";
     }
@@ -446,7 +456,6 @@
       document.getElementById("prevNominal1").innerText = "Rp " + nominal;
       document.getElementById("prevNominal2").innerText = "Rp " + nominal;
       document.getElementById("prevKeperluan").innerText = keperluan;
-
       document.getElementById("prevQrImg").src = qrUrl;
 
       let templateDoa = dynamicConfig.TEMPLATE_DOA;
@@ -470,6 +479,54 @@
       document.getElementById("formatWaText").value = teksWa;
     }
 
+    // FUNGSI KHUSUS SIMPAN (Bisa diklik berkali-kali untuk update data pada nomor kuitansi yang sama)
+    function simpanTransaksiKeSheet() {
+      const currentNoUrut = document.getElementById("inNoUrut").value;
+      const nama = document.getElementById("inNama").value;
+      const nominal = document.getElementById("inNominal").value;
+      
+      if (!currentNoUrut || !nama || !nominal) {
+        tampilkanAlert("Silakan lengkapi No. Urut, Nama, dan Nominal terlebih dahulu!", "Perhatian");
+        return;
+      }
+
+      const jenisVal = document.getElementById("inJenis").value;
+      const rawTanggal = document.getElementById("inTanggal").value;
+      const keperluan = document.getElementById("inKeperluan").value || "-";
+      const noKwitansiFull = document.getElementById("previewNoKwitansiText").innerText;
+
+      const saveUrl = GAS_API_URL + `?action=saveTransaction&noUrut=${currentNoUrut}&noKwitansi=${encodeURIComponent(noKwitansiFull)}&tanggal=${rawTanggal}&jenis=${jenisVal}&nama=${encodeURIComponent(nama)}&nominal=${encodeURIComponent(nominal)}&keperluan=${encodeURIComponent(keperluan)}`;
+      
+      tampilkanAlert("Menyimpan data ke Google Sheet...", "Mohon Tunggu");
+
+      fetch(saveUrl)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            tampilkanAlert("Data transaksi berhasil disimpan/diperbarui di Google Sheet!", "Berhasil");
+          } else {
+            tampilkanAlert("Gagal menyimpan ke Google Sheet.", "Kesalahan");
+          }
+        })
+        .catch(err => {
+          tampilkanAlert("Terjadi kesalahan jaringan: " + err.message, "Kesalahan");
+        });
+    }
+
+    // FUNGSI BUAT KUITANSI BARU (Reset form & ambil nomor urut berikutnya)
+    function buatKuitansiBaru() {
+      if (confirm("Buat kuitansi baru? Pastikan data transaksi saat ini sudah disimpan.")) {
+        document.getElementById("inNama").value = "";
+        document.getElementById("inNominal").value = "";
+        document.getElementById("inKeperluan").value = "";
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById("inTanggal").value = today;
+        
+        fetchNextNoUrut();
+      }
+    }
+
+    // FUNGSI DOWNLOAD GAMBAR (Murni download tanpa simpan ulang ke Google Sheet)
     async function generateKuitansiImage() {
       const currentNoUrut = document.getElementById("inNoUrut").value;
       const nama = document.getElementById("inNama").value;
@@ -484,17 +541,14 @@
       try {
         const canvasAsli = await html2canvas(element, { scale: 2, useCORS: true });
         
-        // Jarak space dikurangi lagi setengahnya dari 20 menjadi 10
         const paddingSpace = 10; 
         const canvasBaru = document.createElement("canvas");
         canvasBaru.width = canvasAsli.width + (paddingSpace * 2);
         canvasBaru.height = canvasAsli.height + (paddingSpace * 2);
         
         const ctx = canvasBaru.getContext("2d");
-        
         ctx.fillStyle = "#FFFFFF"; 
         ctx.fillRect(0, 0, canvasBaru.width, canvasBaru.height);
-        
         ctx.drawImage(canvasAsli, paddingSpace, paddingSpace);
 
         canvasBaru.toBlob((blob) => {
@@ -508,16 +562,7 @@
           document.body.removeChild(link);
           URL.revokeObjectURL(url);
 
-          const jenisVal = document.getElementById("inJenis").value;
-          const rawTanggal = document.getElementById("inTanggal").value;
-          const keperluan = document.getElementById("inKeperluan").value || "-";
-          const noKwitansiFull = document.getElementById("previewNoKwitansiText").innerText;
-
-          const saveUrl = GAS_API_URL + `?action=saveTransaction&noUrut=${currentNoUrut}&noKwitansi=${encodeURIComponent(noKwitansiFull)}&tanggal=${rawTanggal}&jenis=${jenisVal}&nama=${encodeURIComponent(nama)}&nominal=${encodeURIComponent(nominal)}&keperluan=${encodeURIComponent(keperluan)}`;
-          
-          fetch(saveUrl).catch(e => console.log("Simpan ke sheet latar belakang:", e));
-
-          tampilkanAlert("Kuitansi berhasil didownload dengan space yang sangat pas dan transaksi tersimpan!");
+          tampilkanAlert("Kuitansi berhasil didownload!");
         }, "image/png");
 
       } catch (err) {
