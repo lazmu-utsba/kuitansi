@@ -113,8 +113,7 @@
     <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200">
       <label class="block text-xs font-bold text-gray-700 uppercase mb-3 text-center">Preview Kuitansi</label>
       
-      <!-- Tambahan m-4 supaya pas dicapture html2canvas ada spasi kosong di luar keliling gambar -->
-      <div id="areaKuitansi" class="m-4 p-6 bg-[#FBF7EE] border border-[#C29B46]/60 rounded-2xl text-left space-y-4 relative shadow-sm">
+      <div id="areaKuitansi" class="p-6 bg-[#FBF7EE] border border-[#C29B46]/60 rounded-xl text-left space-y-4 relative shadow-sm">
         
         <!-- HEADER KUITANSI -->
         <div class="border-b border-[#C29B46]/30 pb-3 text-center">
@@ -483,9 +482,25 @@
 
       const element = document.getElementById("areaKuitansi");
       try {
-        const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+        // Render kuitansi asli dengan html2canvas
+        const canvasAsli = await html2canvas(element, { scale: 2, useCORS: true });
         
-        canvas.toBlob((blob) => {
+        // Buat canvas tambahan pembungkus dengan memberikan ruang space (padding keliling)
+        const paddingSpace = 40; // Ukuran jarak space luar gambar
+        const canvasBaru = document.createElement("canvas");
+        canvasBaru.width = canvasAsli.width + (paddingSpace * 2);
+        canvasBaru.height = canvasAsli.height + (paddingSpace * 2);
+        
+        const ctx = canvasBaru.getContext("2d");
+        
+        // Berikan warna latar belakang putih bersih pada space luar tersebut
+        ctx.fillStyle = "#FFFFFF"; 
+        ctx.fillRect(0, 0, canvasBaru.width, canvasBaru.height);
+        
+        // Tempel gambar kuitansi pas di tengah-tengah canvas baru dengan jarak space yang rapi
+        ctx.drawImage(canvasAsli, paddingSpace, paddingSpace);
+
+        canvasBaru.toBlob((blob) => {
           const url = URL.createObjectURL(blob);
           const link = document.createElement("a");
           const namaFile = nama.replace(/[^a-zA-Z0-9]/g, '_') || "Jamaah";
@@ -505,7 +520,7 @@
           
           fetch(saveUrl).catch(e => console.log("Simpan ke sheet latar belakang:", e));
 
-          tampilkanAlert("Kuitansi berhasil didownload dan transaksi telah disimpan ke Google Sheet!");
+          tampilkanAlert("Kuitansi berhasil didownload dengan space keliling yang rapi dan transaksi tersimpan!");
         }, "image/png");
 
       } catch (err) {
