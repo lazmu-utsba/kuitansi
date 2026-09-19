@@ -72,10 +72,7 @@
           <label class="block text-[11px] font-semibold text-gray-600 mb-1">Jenis ZISWAF</label>
           <select id="inJenis" onchange="updatePreview()"
             class="w-full p-2.5 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none bg-white font-semibold text-teal-800">
-            <option value="Infak">Infak</option>
-            <option value="Zakat">Zakat</option>
-            <option value="Sedekah">Sedekah</option>
-            <option value="Wakaf">Wakaf</option>
+            <!-- Opsi akan diisi secara dinamis dari Google Sheet -->
           </select>
         </div>
       </div>
@@ -116,7 +113,6 @@
     <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200">
       <label class="block text-xs font-bold text-gray-700 uppercase mb-2 text-center">Preview Kuitansi</label>
       
-      <!-- Diubah menjadi border solid yang tipis & elegan (Tanpa garis putus-putus) -->
       <div id="areaKuitansi" class="p-4 bg-[#FBF7EE] border border-[#C29B46]/60 rounded-xl text-left space-y-3 relative shadow-sm">
         
         <!-- HEADER KUITANSI -->
@@ -226,7 +222,8 @@
     
     let dynamicConfig = {
       LOGO_URL: "https://lh3.googleusercontent.com/d/1CnBKrSHF_nKrMw1IeM6awuhtOn6TuOAJ",
-      TEMPLATE_DOA: "Semoga menjadi amal jariyah yang terus mengalir pahalanya untuk [KEPERLUAN]."
+      TEMPLATE_DOA: "Semoga menjadi amal jariyah yang terus mengalir pahalanya untuk [KEPERLUAN].",
+      JENIS_ZISWAF: "Infak, Zakat, Sedekah, Wakaf"
     };
 
     window.addEventListener("DOMContentLoaded", () => {
@@ -238,10 +235,18 @@
             document.getElementById("prevLogoImg").src = config.LOGO_URL;
           }
           if (config.TEMPLATE_DOA) dynamicConfig.TEMPLATE_DOA = config.TEMPLATE_DOA;
+          if (config.JENIS_ZISWAF) {
+            dynamicConfig.JENIS_ZISWAF = config.JENIS_ZISWAF;
+            setupJenisZiswafDropdown(config.JENIS_ZISWAF);
+          } else {
+            setupJenisZiswafDropdown("Infak, Zakat, Sedekah, Wakaf");
+          }
           updatePreview();
         })
         .catch(err => {
           console.log("Gagal load config, menggunakan setelan default.");
+          setupJenisZiswafDropdown("Infak, Zakat, Sedekah, Wakaf");
+          updatePreview();
         });
 
       const isLogged = sessionStorage.getItem("lazmu_logged");
@@ -258,6 +263,22 @@
         }
       });
     });
+
+    function setupJenisZiswafDropdown(ziswafString) {
+      const selectEl = document.getElementById("inJenis");
+      selectEl.innerHTML = ""; // Bersihkan opsi lama
+      
+      const items = ziswafString.split(",");
+      items.forEach(item => {
+        const trimmed = item.trim();
+        if (trimmed) {
+          const option = document.createElement("option");
+          option.value = trimmed;
+          option.innerText = trimmed;
+          selectEl.appendChild(option);
+        }
+      });
+    }
 
     function togglePassword() {
       const inputPass = document.getElementById("inPassword");
@@ -354,7 +375,6 @@
       const modal = document.getElementById("customAlertModal");
       modal.classList.add("hidden");
       modal.style.display = "none";
-      // location.reload sudah dihapus agar halaman tidak reset otomatis
     }
 
     function formatRupiah(input) {
@@ -391,11 +411,15 @@
 
     function updatePreview() {
       const rawNoUrut = document.getElementById("inNoUrut").value;
-      const jenisVal = document.getElementById("inJenis").value; 
+      const jenisVal = document.getElementById("inJenis").value || "Infak"; 
+      
+      // Penentuan kode jenis kuitansi otomatis berdasarkan huruf pertama/isi jenis
       let kodeJenis = "INF";
-      if (jenisVal === "Zakat") kodeJenis = "ZKT";
-      if (jenisVal === "Sedekah") kodeJenis = "SDK";
-      if (jenisVal === "Wakaf") kodeJenis = "WKF";
+      let jLower = jenisVal.toLowerCase();
+      if (jLower.includes("zakat")) kodeJenis = "ZKT";
+      else if (jLower.includes("sedekah")) kodeJenis = "SDK";
+      else if (jLower.includes("wakaf")) kodeJenis = "WKF";
+      else kodeJenis = jenisVal.substring(0, 3).toUpperCase();
 
       const romawiBulan = getRomawiMonth();
       const tahun = new Date().getFullYear();
@@ -461,7 +485,6 @@
       try {
         const canvas = await html2canvas(element, { scale: 2, useCORS: true });
         
-        // Menggunakan Blob agar popup download di HP bersih tanpa teks base64 yang ruwet
         canvas.toBlob((blob) => {
           const url = URL.createObjectURL(blob);
           const link = document.createElement("a");
@@ -473,7 +496,6 @@
           document.body.removeChild(link);
           URL.revokeObjectURL(url);
 
-          // Simpan data otomatis ke Google Sheet di latar belakang
           const jenisVal = document.getElementById("inJenis").value;
           const rawTanggal = document.getElementById("inTanggal").value;
           const keperluan = document.getElementById("inKeperluan").value || "-";
