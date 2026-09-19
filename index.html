@@ -113,7 +113,6 @@
     <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200">
       <label class="block text-xs font-bold text-gray-700 uppercase mb-3 text-center">Preview Kuitansi</label>
       
-      <!-- Area kuitansi dengan padding p-6 supaya ada spasi longgar dari ujung garis -->
       <div id="areaKuitansi" class="p-6 bg-[#FBF7EE] border border-[#C29B46]/60 rounded-xl text-left space-y-4 relative shadow-sm">
         
         <!-- HEADER KUITANSI -->
@@ -477,7 +476,7 @@
       const nominal = document.getElementById("inNominal").value;
       
       if (!currentNoUrut || !nama || !nominal) {
-        tampilkanAlert("Sila lengkapkan No. Urut, Nama, dan Nominal terlebih dahulu!", "Perhatian");
+        tampilkanAlert("Silakan lengkapi No. Urut, Nama, dan Nominal terlebih dahulu!", "Perhatian");
         return;
       }
 
